@@ -13,7 +13,7 @@ import logging
 import os
 import json
 import time
-from datetime import datetime
+import re
 from typing import List, Dict, Optional
 from flask import Flask, request, jsonify
 import threading
@@ -42,6 +42,29 @@ class PaperlessSync:
             ]
         )
         self.logger = logging.getLogger(__name__)
+
+    def extract_document_id_from_url(self, url: str) -> Optional[int]:
+        """
+        Extract document ID from Paperless document URL.
+        Example: https://paperless.example.com/documents/55/ -> 55
+        """
+        try:
+            # Match the document ID in the URL
+            match = re.search(r'/documents/(\d+)/?$', url)
+            if match:
+                return int(match.group(1))
+            
+            # Alternative pattern if the URL format is different
+            match = re.search(r'document_id=(\d+)', url)
+            if match:
+                return int(match.group(1))
+                
+            self.logger.warning(f"Could not extract document ID from URL: {url}")
+            return None
+            
+        except (ValueError, TypeError) as e:
+            self.logger.error(f"Error extracting document ID from URL {url}: {e}")
+            return None
 
     def get_users(self) -> Dict[int, str]:
         """Fetch all users from Paperless."""
@@ -303,22 +326,28 @@ class WebhookServer:
                 if not data:
                     return jsonify({'error': 'No JSON data received'}), 400
                 
-                event_type = data.get('event_type')
-                document_id = data.get('document_id')
+                # Extract document URL from webhook payload
+                document_url = data.get('url')
+                if not document_url:
+                    self.sync_client.logger.warning("Webhook received without URL field")
+                    return jsonify({'status': 'ignored', 'message': 'No URL in payload'}), 200
                 
-                self.sync_client.logger.info(f"Received webhook: {event_type} for document {document_id}")
+                # Extract document ID from URL
+                document_id = self.sync_client.extract_document_id_from_url(document_url)
+                if not document_id:
+                    self.sync_client.logger.error(f"Could not extract document ID from URL: {document_url}")
+                    return jsonify({'error': 'Invalid document URL'}), 400
                 
-                if event_type in ['document_added', 'document_updated'] and document_id:
-                    # Small delay to ensure document is fully processed
-                    time.sleep(2)
-                    success = self.sync_client.sync_document_owner_tag(document_id)
-                    
-                    if success:
-                        return jsonify({'status': 'success', 'message': 'Document processed'}), 200
-                    else:
-                        return jsonify({'status': 'error', 'message': 'Failed to process document'}), 500
+                self.sync_client.logger.info(f"Received webhook for document {document_id} (URL: {document_url})")
+                
+                # Small delay to ensure document is fully processed
+                time.sleep(2)
+                success = self.sync_client.sync_document_owner_tag(document_id)
+                
+                if success:
+                    return jsonify({'status': 'success', 'message': 'Document processed', 'document_id': document_id}), 200
                 else:
-                    return jsonify({'status': 'ignored', 'message': 'Event type not handled'}), 200
+                    return jsonify({'status': 'error', 'message': 'Failed to process document', 'document_id': document_id}), 500
                     
             except Exception as e:
                 self.sync_client.logger.error(f"Webhook error: {e}")
