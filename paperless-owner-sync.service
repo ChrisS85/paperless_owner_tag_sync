@@ -1,0 +1,31 @@
+[Unit]
+Description=Paperless-ngx Owner to Tag Sync Service
+Documentation=https://github.com/ChrisS85/paperless_owner_tag_sync
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+# User=paperless
+# Group=paperless
+WorkingDirectory=/opt/paperless-owner-sync #script directory
+
+# Environment variables - configure these in /opt/paperless-owner-sync.conf
+EnvironmentFile=/opt/paperless-owner-sync.conf
+
+# Activate virtual environment and run script
+ExecStart=/opt/paperless-owner-sync/bin/python /opt/paperless-owner-sync/paperless_owner_tag_sync.py
+
+# Restart settings
+Restart=always
+RestartSec=10
+StartLimitInterval=60
+StartLimitBurst=5
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=paperless-owner-sync
+
+[Install]
+WantedBy=multi-user.target
