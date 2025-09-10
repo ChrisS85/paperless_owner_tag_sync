@@ -2,6 +2,8 @@
 
 Syncs paperless-ngx document owners to owner specific tags. Useful when automatically tagging through incoming subdirectories to support tagging when uploading documents from paperless-mobile, which only sets owners but doesn't support tags.
 
+WARNING: Script is AI-generated, use at your own risk! I have tested it in webhook mode on my instance and read through the code.
+
 ## Instructions
 Script can run in webhook, schedule or hybrid mode. Schedule will regularly update all documents. Webhook starts a server that can receive webhooks from paperless every time a document is added. Hybrid is a combination of both.
 
