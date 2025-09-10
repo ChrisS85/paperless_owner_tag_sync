@@ -7,15 +7,16 @@ Script can run in webhook, schedule or hybrid mode. Schedule will regularly upda
 
 ### Environment variables
 The script uses these environment variables, with defaults given below:
-PAPERLESS_URL = http://localhost:8000
-PAPERLESS_TOKEN = 
-OWNER_TAG_PREFIX = owner:
-OWNER_MAPPING_FILE = owner_tag_mapping.json
 
-SYNC_MODE = webhook  # webhook, hybrid, schedule
-WEBHOOK_HOST = '0.0.0.0'
-WEBHOOK_PORT = 5000
-SYNC_INTERVAL_HOURS = 6
+    PAPERLESS_URL = http://localhost:8000
+    PAPERLESS_TOKEN = 
+    OWNER_TAG_PREFIX = owner:
+    OWNER_MAPPING_FILE = owner_tag_mapping.json
+
+    SYNC_MODE = webhook  # webhook, hybrid, schedule
+    WEBHOOK_HOST = '0.0.0.0'
+    WEBHOOK_PORT = 5000
+    SYNC_INTERVAL_HOURS = 6
 
 ### Owner-Tag Mappings
 By default, the script adds OWNER_TAG_PREFIX in front of the owner, e.g. John --> owner:John. You can specify owner --> tag mappings in OWNER_MAPPING_FILE, which is of the form {'owner1': 'tag1', 'owner2': 'tag2}. This will override the default prefix-based mapping and require that the tags used in that file already exist in paperless.
@@ -32,7 +33,7 @@ To use webhooks, you need to setup a workflow in paperless:
     Include document: Unchecked
 
 ## Installation
-Create venv:
+Create venv in script directory:
 
     python -m venv .
     pip install -r requirements.txt
