@@ -37,6 +37,7 @@ Create venv:
     pip install -r requirements.txt
 
 Adapt systemd service and environment config as needed. Copy systemd service to /etc/systemd/system/ (or to some user systemd directory if running as user). Finally:
+
     sudo systemctl daemon-reload
     sudo systemctl start paperless-owner-sync
     sudo systemctl enable paperless-owner-sync
