@@ -22,13 +22,14 @@ By default, the script adds OWNER_TAG_PREFIX in front of the owner, e.g. John --
 
 ### Webhooks
 To use webhooks, you need to setup a workflow in paperless:
-Trigger: Document added
-Action: Webhook
-Webhook URL: http://localhost:5000/webhook/document (or as appropriate)
-Use parameters for webhook: Checked
-Send parameters as JSON: Checked
-Add a parameter with url / {doc_url}
-Include document: Unchecked
+
+    Trigger: Document added
+    Action: Webhook
+    Webhook URL: http://localhost:5000/webhook/document (or as appropriate)
+    Use parameters for webhook: Checked
+    Send parameters as JSON: Checked
+    Add a parameter with url / {doc_url}
+    Include document: Unchecked
 
 ## Installation
 Create venv:
