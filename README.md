@@ -9,7 +9,7 @@ Script can run in webhook, schedule or hybrid mode. Schedule will regularly upda
 The script uses these environment variables, with defaults given below:
 
     PAPERLESS_URL = http://localhost:8000
-    PAPERLESS_TOKEN = 
+    PAPERLESS_TOKEN = #YOUR CREATED API TOKEN
     OWNER_TAG_PREFIX = owner:
     OWNER_MAPPING_FILE = owner_tag_mapping.json
 
@@ -31,6 +31,8 @@ To use webhooks, you need to setup a workflow in paperless:
     Send parameters as JSON: Checked
     Add a parameter with url / {doc_url}
     Include document: Unchecked
+
+Additionally, you need to create a token or use an existing one in Settings -> Django Admin Panel --> Auth Token.
 
 ## Installation
 Create venv in script directory:
